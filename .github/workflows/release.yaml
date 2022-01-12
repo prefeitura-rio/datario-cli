@@ -40,13 +40,13 @@ jobs:
 
       - name: Move it to current directory
         run: |
-          mv dist/edrio ./edrio-$GITHUB_REF_NAME-${{ matrix.os }}
+          mv dist/edrio ./edrio-${{ github.ref_name }}-${{ matrix.os }}
 
       - name: Upload artifact
         uses: actions/upload-artifact@v1
         with:
           name: uploads
-          path: ./edrio-$GITHUB_REF_NAME-${{ matrix.os }}
+          path: ./edrio-${{ github.ref_name }}-${{ matrix.os }}
 
   upload-release:
     runs-on: ubuntu-18.04
