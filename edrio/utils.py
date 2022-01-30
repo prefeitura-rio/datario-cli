@@ -1,0 +1,208 @@
+"""
+General utilities for the edrio CLI tool.
+"""
+
+import base64
+from functools import partial
+import json
+from os import getenv, environ
+from pathlib import Path
+from random import choice
+import subprocess
+from sys import exit
+from typing import Callable, List, Union
+
+from typer import prompt
+
+from edrio.constants import Constants as constants
+from edrio.logger import log, logger
+
+
+def append_output_to_string(output: str, wrapped_string: List[str]) -> None:
+    """
+    Appends the given output to the given string
+    """
+    wrapped_string[0] += output
+
+
+def build_directory_tree(directory: str) -> None:
+    """
+    Builds the directory tree for the given directory
+    """
+    Path(directory).mkdir(parents=True, exist_ok=True)
+
+
+def check_for_env_vars(
+    env_vars: List[str],
+    path: str = constants.EDRIO_ENVIRONMENTS_FILE.value,
+    save: bool = True,
+) -> Callable:
+    """
+    Decorator that checks for required environment variables, and if they are missing, prompts
+    values for them using `prompt_env`, sets them and saves to environment files.
+    """
+    load_env_file(path)
+    missing_vars = []
+    for env_var in env_vars:
+        if not getenv(env_var):
+            missing_vars.append(env_var)
+    if missing_vars:
+        logger.info(f"Missing environment variables: {missing_vars}")
+        for env_var in missing_vars:
+            setenv(env_var, prompt_env(
+                constants.EDRIO_ENVIRONMENTS_LIST.value[env_var],
+            ))
+        if save:
+            save_env_file(path)
+
+
+def check_requirements(requirements_list: List[str]) -> None:
+    """
+    Asserts that the required commands are installed. If something is missing, raise errors to the
+    user.
+    """
+    INITIAL_MESSAGE = "The following required commands are missing:"
+    msg = INITIAL_MESSAGE
+
+    for requirement in requirements_list:
+        if not command_exists(requirement):
+            msg += f"\n  * {requirement}"
+
+    if msg != INITIAL_MESSAGE:
+        logger.error(msg)
+        raise Exception(msg)
+
+
+def clone_git_repository(repository: str, directory: str) -> None:
+    """
+    Clones the given git repository to the given directory
+    """
+    build_directory_tree(directory)
+    echo_and_run(f"git clone {repository} {directory}",
+                 stdout_callback=lambda _: None)
+
+
+def command_exists(command: str) -> bool:
+    """
+    Asserts that the given command exists
+    """
+    try:
+        echo_and_run(f"which {command}", stdout_callback=lambda _: None)
+        return True
+    except subprocess.CalledProcessError:
+        return False
+
+
+def directory_exists(directory: str) -> bool:
+    """
+    Asserts that the given directory exists
+    """
+    return Path(directory).exists()
+
+
+def echo_and_run(
+    command: str,
+    stdout_callback: Callable = partial(print, end=""),
+    on_error: Union[Callable, str] = "raise",
+) -> int:
+    """
+    Echoes the command and then runs it, sending output to stdout_callback
+    """
+    allowed_on_errors = ["raise", "return"]
+    if on_error not in allowed_on_errors:
+        log(f"Invalid on_error value: {on_error}", "error")
+        raise ValueError(f"Invalid on_error: {on_error}")
+    log(f":laptop: {command}")
+    popen = subprocess.Popen(
+        command, shell=True, stdout=subprocess.PIPE, universal_newlines=True)
+    for stdout_line in iter(popen.stdout.readline, ""):
+        stdout_callback(stdout_line)
+    popen.stdout.close()
+    return_code = popen.wait()
+    if return_code:
+        if callable(on_error):
+            on_error(return_code)
+        elif on_error == "raise":
+            log(f"{random_error_emoji()} {command} failed with exit code {return_code}", "error")
+            exit(return_code)
+        else:
+            return return_code
+    return return_code
+
+
+def file_exists(path: str) -> bool:
+    """
+    Asserts that the given file exists
+    """
+    return Path(path).exists()
+
+
+def load_env_file(path: str = constants.EDRIO_ENVIRONMENTS_FILE.value) -> bool:
+    """
+    Loads the given environment file
+    """
+    if not Path(path).exists():
+        return False
+    with open(path) as f:
+        env_file = json.load(f)
+        for key, value in env_file.items():
+            setenv(key, base64.b64decode(value).decode("utf-8"))
+    return True
+
+
+def prompt_env(message: str, default: str = None) -> str:
+    """
+    Prompts the user for the given environment variable
+    """
+    if default:
+        return prompt(f"{message} [{default}]", default=default)
+    return prompt(f"{message}")
+
+
+def random_error_emoji() -> str:
+    """
+    Returns a random error emoji
+    """
+    return choice(constants.EMOJIS_ERROR.value)
+
+
+def random_success_emoji() -> str:
+    """
+    Returns a random success emoji
+    """
+    return choice(constants.EMOJIS_SUCCESS.value)
+
+
+def save_env_file(path: str = constants.EDRIO_ENVIRONMENTS_FILE.value) -> bool:
+    """
+    Saves the current environment file to the given path
+    """
+    build_directory_tree(Path(path).parent)
+    env_file = {}
+    for key, value in environ.items():
+        if key in constants.EDRIO_ENVIRONMENTS_LIST.value:
+            env_file[key] = base64.b64encode(
+                value.encode("utf-8")).decode("utf-8")
+    with open(path, "w") as f:
+        json.dump(env_file, f, indent=4)
+
+
+def setenv(key: str, value: str) -> None:
+    """
+    Sets the given environment variable
+    """
+    environ[key] = value
+
+
+def update_git_repo() -> None:
+    """
+    Updates the git repository
+    """
+    if directory_exists(constants.IAC_DIRECTORY.value):
+        echo_and_run(
+            f"cd {constants.IAC_DIRECTORY.value} && git pull --ff-only",
+            stdout_callback=lambda _: None)
+    else:
+        echo_and_run(
+            f"git clone {constants.IAC_GIT_REPOSITORY.value} {constants.IAC_DIRECTORY.value}",
+            stdout_callback=lambda _: None)
