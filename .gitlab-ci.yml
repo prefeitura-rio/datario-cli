@@ -2,7 +2,7 @@ stages:
   - test
   - package
 
-.build:
+build:
   stage: package
   image:
     name: python:3.9-slim
