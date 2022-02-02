@@ -17,6 +17,6 @@ build:
     # Rename it for better packaging
     - mv dist/cli datario-linux-x64
     # Upload artifact
-    - curl --request POST --user gitlab-ci-token:$CI_JOB_TOKEN --upload-file "datario-linux-x64" "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/datario/stable"
+    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file datario-linux-x64 "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/datario/stable/datario-linux-x64"'
 
 
