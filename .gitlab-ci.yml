@@ -5,10 +5,10 @@ stages:
 build:
   stage: package
   image:
-    name: python:3.9-slim
+    name: python:3.9
   script:
     # Install dependencies
-    - sudo apt-get update && sudo apt-get install -y curl
+    - apt-get update && apt-get install -y curl
     - python3 -m pip install --no-cache-dir .
     # Build with pyinstaller
     - pyinstaller --onefile --clean --windowed datario_cli/cli.py
