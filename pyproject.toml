@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "edrio"
+name = "datario_cli"
 version = "0.1.0"
 description = "Escritório de Dados Rio CLI Tool"
 authors = ["Gabriel Gazola Milan <gabriel.gazola@poli.ufrj.br>"]

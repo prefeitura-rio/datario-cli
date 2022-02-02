@@ -1,4 +1,4 @@
-# edrio
+# datario_cli
 
 Escritório de Dados Rio CLI Tool
 

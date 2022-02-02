@@ -1,4 +1,4 @@
-name: Release edrio
+name: Release datario_cli
 
 on:
   push:
@@ -32,21 +32,21 @@ jobs:
 
       - name: Build
         run: |
-          pyinstaller --onefile --clean --windowed edrio.py
+          pyinstaller --onefile --clean --windowed datario_cli.py
 
       - name: Ensure it works
         run: |
-          dist/edrio --help
+          dist/datario_cli --help
 
       - name: Move it to current directory
         run: |
-          mv dist/edrio ./edrio-${{ github.ref_name }}-${{ matrix.os }}
+          mv dist/datario_cli ./datario_cli-${{ github.ref_name }}-${{ matrix.os }}
 
       - name: Upload artifact
         uses: actions/upload-artifact@v1
         with:
           name: uploads
-          path: ./edrio-${{ github.ref_name }}-${{ matrix.os }}
+          path: ./datario_cli-${{ github.ref_name }}-${{ matrix.os }}
 
   upload-release:
     runs-on: ubuntu-18.04
