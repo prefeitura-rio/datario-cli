@@ -1,6 +1,6 @@
 from typer import Typer
 
-from edrio.sub import (
+from datario_cli.sub import (
     config,
     gke,
     prefect,

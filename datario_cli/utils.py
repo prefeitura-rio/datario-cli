@@ -1,5 +1,5 @@
 """
-General utilities for the edrio CLI tool.
+General utilities for the datario_cli CLI tool.
 """
 
 import base64
@@ -14,8 +14,8 @@ from typing import Callable, List, Union
 
 from typer import prompt, confirm
 
-from edrio.constants import Constants as constants
-from edrio.logger import log, logger
+from datario_cli.constants import Constants as constants
+from datario_cli.logger import log, logger
 
 
 def append_output_to_string(output: str, wrapped_string: List[str]) -> None:
@@ -34,7 +34,7 @@ def build_directory_tree(directory: str) -> None:
 
 def check_for_env_vars(
     env_vars: List[str],
-    path: str = constants.EDRIO_ENVIRONMENTS_FILE.value,
+    path: str = constants.datario_cli_ENVIRONMENTS_FILE.value,
     save: bool = True,
 ) -> Callable:
     """
@@ -51,7 +51,7 @@ def check_for_env_vars(
             f"Variáveis de ambiente faltando: {missing_vars}", level="warning")
         for env_var in missing_vars:
             setenv(env_var, prompt_env(
-                constants.EDRIO_ENVIRONMENTS_LIST.value[env_var],
+                constants.datario_cli_ENVIRONMENTS_LIST.value[env_var],
             ))
         if save:
             save_env_file(path)
@@ -162,7 +162,7 @@ def get_current_kubectl_context() -> str:
     return current_context
 
 
-def load_env_file(path: str = constants.EDRIO_ENVIRONMENTS_FILE.value) -> bool:
+def load_env_file(path: str = constants.datario_cli_ENVIRONMENTS_FILE.value) -> bool:
     """
     Loads the given environment file
     """
@@ -194,14 +194,14 @@ def random_emoji(category: str = None) -> str:
     return choice(constants.EMOJIS.value[category])
 
 
-def save_env_file(path: str = constants.EDRIO_ENVIRONMENTS_FILE.value) -> bool:
+def save_env_file(path: str = constants.datario_cli_ENVIRONMENTS_FILE.value) -> bool:
     """
     Saves the current environment file to the given path
     """
     build_directory_tree(Path(path).parent)
     env_file = {}
     for key, value in environ.items():
-        if key in constants.EDRIO_ENVIRONMENTS_LIST.value:
+        if key in constants.datario_cli_ENVIRONMENTS_LIST.value:
             env_file[key] = base64.b64encode(
                 value.encode("utf-8")).decode("utf-8")
     with open(path, "w") as f:

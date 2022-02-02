@@ -1,5 +1,5 @@
 """
-Logger module for edrio.
+Logger module for datario_cli.
 """
 
 import sys

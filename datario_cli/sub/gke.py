@@ -7,9 +7,9 @@ from sys import argv
 
 from typer import Typer
 
-from edrio.constants import Constants as constants
-from edrio.logger import log
-from edrio.utils import (
+from datario_cli.constants import Constants as constants
+from datario_cli.logger import log
+from datario_cli.utils import (
     append_output_to_string,
     check_for_env_vars,
     check_requirements,

@@ -1,8 +1,8 @@
 from pathlib import Path
 import sys
 
-from edrio.logger import log
-from edrio.utils import echo_and_run
+from datario_cli.logger import log
+from datario_cli.utils import echo_and_run
 
 
 def install():
@@ -15,12 +15,12 @@ def install():
 
     # Rename the executable
     echo_and_run(
-        f"mv dist/cli{extension} dist/edrio{extension}")
+        f"mv dist/cli{extension} dist/datario_cli{extension}")
 
     # Show after install instructions
-    log(f"\n\nEdrio binary is located at: dist/edrio{extension}")
+    log(f"\n\ndatario_cli binary is located at: dist/datario_cli{extension}")
     log("If you want to install it to your system, run:")
-    log(f"  sudo cp dist/edrio{extension} /usr/local/bin/edrio")
+    log(f"  sudo cp dist/datario_cli{extension} /usr/local/bin/datario_cli")
 
 
 if __name__ == "__main__":

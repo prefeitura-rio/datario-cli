@@ -1,3 +1,3 @@
 __all__ = ["app"]
 
-from edrio.cli import app
+from datario_cli.cli import app
