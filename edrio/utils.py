@@ -12,7 +12,7 @@ import subprocess
 from sys import exit
 from typing import Callable, List, Union
 
-from typer import prompt
+from typer import prompt, confirm
 
 from edrio.constants import Constants as constants
 from edrio.logger import log, logger
@@ -47,7 +47,8 @@ def check_for_env_vars(
         if not getenv(env_var):
             missing_vars.append(env_var)
     if missing_vars:
-        logger.info(f"Missing environment variables: {missing_vars}")
+        log(
+            f"Variáveis de ambiente faltando: {missing_vars}", level="warning")
         for env_var in missing_vars:
             setenv(env_var, prompt_env(
                 constants.EDRIO_ENVIRONMENTS_LIST.value[env_var],
@@ -112,7 +113,7 @@ def echo_and_run(
     if on_error not in allowed_on_errors:
         log(f"Invalid on_error value: {on_error}", "error")
         raise ValueError(f"Invalid on_error: {on_error}")
-    log(f":laptop: {command}")
+    log(f'{random_emoji("technology")} {command}')
     popen = subprocess.Popen(
         command, shell=True, stdout=subprocess.PIPE, universal_newlines=True)
     for stdout_line in iter(popen.stdout.readline, ""):
@@ -123,7 +124,7 @@ def echo_and_run(
         if callable(on_error):
             on_error(return_code)
         elif on_error == "raise":
-            log(f"{random_error_emoji()} {command} failed with exit code {return_code}", "error")
+            log(f'{random_emoji("error")} {command} failed with exit code {return_code}', "error")
             exit(return_code)
         else:
             return return_code
@@ -135,6 +136,30 @@ def file_exists(path: str) -> bool:
     Asserts that the given file exists
     """
     return Path(path).exists()
+
+
+def get_confirmation(action: str) -> bool:
+    """
+    Prompts the user for confirmation
+    """
+    return confirm(f"😱 Tem certeza que deseja {action}?")
+
+
+def get_current_kubectl_context() -> str:
+    """
+    Gets the current kubectl context
+    """
+    current_context = ""
+
+    def callback(output: str):
+        nonlocal current_context
+        current_context = output.strip()
+
+    echo_and_run(
+        f"kubectl config current-context",
+        stdout_callback=callback,
+    )
+    return current_context
 
 
 def load_env_file(path: str = constants.EDRIO_ENVIRONMENTS_FILE.value) -> bool:
@@ -155,22 +180,18 @@ def prompt_env(message: str, default: str = None) -> str:
     Prompts the user for the given environment variable
     """
     if default:
-        return prompt(f"{message} [{default}]", default=default)
+        return prompt(f"{message}", default=default)
     return prompt(f"{message}")
 
 
-def random_error_emoji() -> str:
+def random_emoji(category: str = None) -> str:
     """
-    Returns a random error emoji
+    Returns a random emoji
     """
-    return choice(constants.EMOJIS_ERROR.value)
-
-
-def random_success_emoji() -> str:
-    """
-    Returns a random success emoji
-    """
-    return choice(constants.EMOJIS_SUCCESS.value)
+    if category:
+        return choice(constants.EMOJIS.value[category])
+    category = choice(list(constants.EMOJIS.value.keys()))
+    return choice(constants.EMOJIS.value[category])
 
 
 def save_env_file(path: str = constants.EDRIO_ENVIRONMENTS_FILE.value) -> bool:

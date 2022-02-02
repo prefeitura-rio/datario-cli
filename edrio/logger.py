@@ -2,8 +2,22 @@
 Logger module for edrio.
 """
 
+import sys
+
 import emoji
 from loguru import logger
+
+fmt = (
+    # "<blue>{time:YYYY-MM-DD HH:mm:ss.SSS}</blue> | "
+    # "<level>{level: <8}</level> | "
+    "<level>{message}</level>"
+)
+config = {
+    "handlers": [
+        {"sink": sys.stderr, "format": fmt},
+    ]
+}
+logger.configure(**config)
 
 
 def log(message, level="info"):
@@ -13,6 +27,7 @@ def log(message, level="info"):
     funcs = {
         "debug": logger.debug,
         "info": logger.info,
+        "success": logger.success,
         "warning": logger.warning,
         "error": logger.error,
     }

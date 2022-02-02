@@ -14,8 +14,9 @@ from edrio.utils import (
     check_for_env_vars,
     check_requirements,
     echo_and_run,
-    random_error_emoji,
-    random_success_emoji,
+    get_confirmation,
+    random_emoji,
+    random_emoji,
     update_git_repo,
 )
 
@@ -60,10 +61,12 @@ def destroy():
     """
     Tears down the GKE cluster.
     """
-    setup()
-    echo_and_run(
-        f"cd {constants.IAC_DIRECTORY.value}/gke && terraform destroy -auto-approve",
-    )
+    if get_confirmation("destruir o cluster GKE"):
+        setup()
+        echo_and_run(
+            f"cd {constants.IAC_DIRECTORY.value}/gke && terraform destroy -auto-approve",
+        )
+        log(f'{random_emoji("success")} O cluster GKE foi destruído.', "success")
 
 
 @app.command()
@@ -83,6 +86,7 @@ def status():
     Prints the status of the GKE cluster.
     """
     setup()
+    log(f'{random_emoji("technology")} Verificando o status do cluster GKE...')
     output_str = [""]
     echo_and_run(
         f"cd {constants.IAC_DIRECTORY.value}/gke && terraform plan -refresh-only",
@@ -95,8 +99,8 @@ def status():
         or
         (output_str.find("No changes.") != -1)
     ):
-        log(f"{random_success_emoji()} Tudo certo!")
+        log(f'{random_emoji("success")} O cluster GKE está de pé e operacional!', "success")
     else:
         log(
-            f"{random_error_emoji()} Ainda há mudanças que precisam ser aplicadas.")
+            f'{random_emoji("error")} Ainda há mudanças que precisam ser aplicadas.')
         log(f"Execute `{argv[0]} gke plan` para verificar as mudanças.")

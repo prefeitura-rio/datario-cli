@@ -23,33 +23,47 @@ class Constants (Enum):
         "TF_VAR_project_id": "ID do projeto da GCP",
         "VAULT_TOKEN": "Token de acesso ao Vault do Escritório Municipal de Dados",
     }
-    EMOJIS_ERROR = [
-        "😱",
-        "😵",
-        "😡",
-        "😭",
-        "😰",
-        "😢",
-        "😞",
-        "😟",
-        "😫",
-        "😩",
-        ":no_entry:",
-    ]
-    EMOJIS_SUCCESS = [
-        ":hundred_points:",
-        ":thumbs_up:",
-        ":clapping_hands:",
-        ":raising_hands:",
-        ":trophy:",
-        ":check_mark_button:",
-        ":rocket:",
-    ]
+    EMOJIS = {
+        "error": [
+            "😱",
+            "😵",
+            "😡",
+            "😭",
+            "😰",
+            "😢",
+            "😞",
+            "😟",
+            "😫",
+            "😩",
+            ":no_entry:",
+        ],
+        "nerd": [
+            ":nerd_face:",
+        ],
+        "success": [
+            ":hundred_points:",
+            ":thumbs_up:",
+            ":clapping_hands:",
+            ":raising_hands:",
+            ":trophy:",
+            ":check_mark_button:",
+            ":rocket:",
+        ],
+        "technology": [
+            ":desktop_computer:",
+            ":laptop:",
+            ":keyboard:",
+            ":man_technologist:",
+            ":woman_technologist:",
+            "💽",
+        ],
+    }
     IAC_DIRECTORY = EDRIO_BASE_DIRECTORY / "iac-public"
-    IAC_GIT_REPOSITORY = "https://git.apps.rio.gov.br/data-lake/data-lake/iac-public.git/"
+    IAC_GIT_REPOSITORY = "https://git.apps.rio.gov.br/escritorio-dados/escritorio-dados/iac-temp.git/"
     IAC_PREFECT_BD_CONFIG_BASE_PATH = IAC_DIRECTORY / \
         "prefect-agent" / "basedosdados" / "config.toml"
     IAC_PREFECT_SECRETS_BASE_PATH = IAC_DIRECTORY / \
         "prefect-agent" / "manifests" / "secrets.yaml"
     IAC_PREFECT_SECRETS_PATH = IAC_DIRECTORY / "secrets.yaml"
+    IAC_PREFECT_VALUES_BASE_PATH = IAC_DIRECTORY / "prefect-agent" / "values.yaml"
     IAC_PREFECT_VALUES_PATH = IAC_DIRECTORY / "values.yaml"

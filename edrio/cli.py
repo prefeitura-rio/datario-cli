@@ -25,3 +25,6 @@ app.add_typer(
     name="config",
     help="Configurations management",
 )
+
+if __name__ == "__main__":
+    app()
