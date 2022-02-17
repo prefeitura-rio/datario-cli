@@ -37,22 +37,22 @@ def init():
     """
     setup()
 
-    if Path(constants.datario_cli_ENVIRONMENTS_FILE.value).exists():
+    if Path(constants.DATARIO_ENVIRONMENTS_FILE.value).exists():
         print("🤔 Você já tem um arquivo de configuração.")
         if get_confirmation("apagar o arquivo"):
-            Path(constants.datario_cli_ENVIRONMENTS_FILE.value).unlink()
+            Path(constants.DATARIO_ENVIRONMENTS_FILE.value).unlink()
             print("🗑️ Arquivo apagado.")
-            for key in constants.datario_cli_ENVIRONMENTS_LIST.value:
+            for key in constants.DATARIO_ENVIRONMENTS_LIST.value:
                 setenv(key, "")
 
     # Check for environment variables
     check_for_env_vars(
-        constants.datario_cli_ENVIRONMENTS_LIST.value.keys(),
+        constants.DATARIO_ENVIRONMENTS_LIST.value.keys(),
         save=False,
     )
 
     # Save environment variables
-    save_env_file(constants.datario_cli_ENVIRONMENTS_FILE.value)
+    save_env_file(constants.DATARIO_ENVIRONMENTS_FILE.value)
 
 
 @app.command()
@@ -63,8 +63,8 @@ def reset():
     setup()
     accept = get_confirmation("deletar suas configurações atuais?")
     if accept:
-        if Path(constants.datario_cli_ENVIRONMENTS_FILE.value).exists():
-            Path(constants.datario_cli_ENVIRONMENTS_FILE.value).unlink()
+        if Path(constants.DATARIO_ENVIRONMENTS_FILE.value).exists():
+            Path(constants.DATARIO_ENVIRONMENTS_FILE.value).unlink()
             log(f'{random_emoji("success")} Arquivo de configurações apagado com sucesso!',
                 "success")
         else:
@@ -81,7 +81,7 @@ def show():
     """
     setup()
     log(f'{random_emoji("nerd")} Configurações atuais:')
-    for key, value in constants.datario_cli_ENVIRONMENTS_LIST.value.items():
+    for key, value in constants.DATARIO_ENVIRONMENTS_LIST.value.items():
         val = getenv(key)
         if val:
             log(f'  * {value}: {val}')
@@ -95,8 +95,8 @@ def update():
     Update configurations set
     """
     setup()
-    for env_name in constants.datario_cli_ENVIRONMENTS_LIST.value:
+    for env_name in constants.DATARIO_ENVIRONMENTS_LIST.value:
         env_value = getenv(env_name)
         if env_value:
             prompt_env(
-                constants.datario_cli_ENVIRONMENTS_LIST.value[env_name], env_value)
+                constants.DATARIO_ENVIRONMENTS_LIST.value[env_name], env_value)

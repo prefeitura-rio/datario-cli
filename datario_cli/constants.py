@@ -1,5 +1,5 @@
 """
-Constant values for datario_cli.
+Constant values for datario.
 """
 
 from enum import Enum
@@ -8,12 +8,12 @@ from pathlib import Path
 
 class Constants (Enum):
     """
-    All constants for the datario_cli CLI tool.
+    All constants for the datario CLI tool.
     """
     DATARIO_VAULT_EXTERNAL_ADDRESS = "http://vault-datario.vault.svc.cluster.local:8200/"
-    datario_cli_BASE_DIRECTORY = Path.home() / ".datario_cli"
-    datario_cli_ENVIRONMENTS_FILE = datario_cli_BASE_DIRECTORY / "envs.json"
-    datario_cli_ENVIRONMENTS_LIST = {
+    DATARIO_BASE_DIRECTORY = Path.home() / ".datario"
+    DATARIO_ENVIRONMENTS_FILE = DATARIO_BASE_DIRECTORY / "envs.json"
+    DATARIO_ENVIRONMENTS_LIST = {
         "BASEDOSDADOS_CREDENTIALS_PROD_PATH":
             "Caminho absoluto para o arquivo de credenciais do ambiente prod da BD+",
         "BASEDOSDADOS_CREDENTIALS_STAGING_PATH":
@@ -58,7 +58,7 @@ class Constants (Enum):
             "💽",
         ],
     }
-    IAC_DIRECTORY = datario_cli_BASE_DIRECTORY / "iac-public"
+    IAC_DIRECTORY = DATARIO_BASE_DIRECTORY / "iac-public"
     IAC_GIT_REPOSITORY = "https://git.apps.rio.gov.br/escritorio-dados/escritorio-dados/iac-temp.git/"
     IAC_PREFECT_BD_CONFIG_BASE_PATH = IAC_DIRECTORY / \
         "prefect-agent" / "basedosdados" / "config.toml"

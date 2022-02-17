@@ -108,7 +108,7 @@ def setup():
         "VAULT_TOKEN",
     ])
     load_env_file()
-    # update_git_repo() # TODO: uncomment when gitlab gets back online
+    update_git_repo()
     if not file_exists(constants.IAC_PREFECT_SECRETS_PATH.value):
         log(f'{random_emoji("error")} Agent secrets file not found. Building...', "warning")
         build_secrets_yaml()
