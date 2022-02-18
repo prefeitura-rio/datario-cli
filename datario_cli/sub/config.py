@@ -100,3 +100,5 @@ def update():
         if env_value:
             prompt_env(
                 constants.DATARIO_ENVIRONMENTS_LIST.value[env_name], env_value)
+    # Save environment variables
+    save_env_file(constants.DATARIO_ENVIRONMENTS_FILE.value)
