@@ -32,27 +32,32 @@ esac
 function exit_if_error() {
     local exit_code=$1
     shift
-    [[ $exit_code]] &&
-        ((exit_code != 0)) && {
-            printf 'ERROR: %s\n' "$@" >&2
-            exit "$exit_code"
-        }
+    if [[ $exit_code != 0 ]]; then
+        printf 'ERROR: %s\n' "$@" >&2
+        exit "$exit_code"
+    fi
 }
 
 # Function that will build the binaries for datario.
 function build_datario {
 
     # Check if python3 is available using the `which` command.
-    python3_path=$(which python3)
-    exit_if_error $? "Python 3.x não encontrado. Verifique se o comando `python3` está disponível."
+    if [ ! -x "$(which python3)" ]; then
+        echo "Python 3.x não está instalado. Instale-o e execute este script novamente."
+        exit 1
+    fi
 
     # Check if pip3 is available using the `which` command.
-    pip3_path=$(which pip3)
-    exit_if_error $? "Pip 3.x não encontrado. Verifique se o comando `pip3` está disponível."
+    if [ ! -x "$(which pip3)" ]; then
+        echo "Pip para Python 3.x não está instalado. Instale-o e execute este script novamente."
+        exit 1
+    fi
 
     # Check if git is available using the `which` command.
-    git_path=$(which git)
-    exit_if_error $? "Git não encontrado. Verifique se o comando `git` está disponível."
+    if [ ! -x "$(which git)" ]; then
+        echo "Git não está instalado. Instale-o e execute este script novamente."
+        exit 1
+    fi
 
     # Python version must be >= MIN_PYTHON_VERSION and < MAX_PYTHON_VERSION.
     python_version=$(python3 -c 'import sys; print("".join(map(str, sys.version_info[:2])));')
@@ -96,7 +101,7 @@ function build_datario {
 if [ "$machine" = "Linux" ] && [ "$arch" = "x86_64" ]; then
     echo "Você está executando o script em um computador Linux 64-bit."
     echo "Baixando os binários do datario..."
-    wget -q -O /tmp/datario https://git.apps.rio.gov.br/escritorio-dados/escritorio-dados/datario-cli/-/package_files/6/download
+    wget -q -O /tmp/datario https://git.apps.rio.gov.br/api/v4/projects/966/packages/generic/datario/stable/datario-linux-x64
 
 # If we're on:
 # - Linux (another architecture) or
