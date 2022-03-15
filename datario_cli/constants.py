@@ -14,14 +14,30 @@ class Constants (Enum):
     DATARIO_BASE_DIRECTORY = Path.home() / ".datario"
     DATARIO_ENVIRONMENTS_FILE = DATARIO_BASE_DIRECTORY / "envs.json"
     DATARIO_ENVIRONMENTS_LIST = {
-        "BASEDOSDADOS_CREDENTIALS_PROD_PATH":
-            "Caminho absoluto para o arquivo de credenciais do ambiente prod da BD+",
-        "BASEDOSDADOS_CREDENTIALS_STAGING_PATH":
-            "Caminho absoluto para o arquivo de credenciais do ambiente staging da BD+",
-        "GOOGLE_APPLICATION_CREDENTIALS": "Caminho absoluto para o arquivo de credenciais da GCP",
-        "TF_VAR_bucket_name": "Nome do bucket da GCP para armazenamento do estado do Terraform",
-        "TF_VAR_project_id": "ID do projeto da GCP",
-        "VAULT_TOKEN": "Token de acesso ao Vault do Escritório Municipal de Dados",
+        "BASEDOSDADOS_CREDENTIALS_PROD_PATH": {
+            "prompt_text": "Caminho absoluto para o arquivo de credenciais do ambiente prod da BD+",
+            "callback_function": None,
+        },
+        "BASEDOSDADOS_CREDENTIALS_STAGING_PATH": {
+            "prompt_text": "Caminho absoluto para o arquivo de credenciais do ambiente staging da BD+",
+            "callback_function": None,
+        },
+        "GOOGLE_APPLICATION_CREDENTIALS": {
+            "prompt_text": "Caminho absoluto para o arquivo de credenciais da GCP",
+            "callback_function": None,
+        },
+        "TF_VAR_bucket_name": {
+            "prompt_text": "Nome do bucket da GCP para armazenamento do estado do Terraform",
+            "callback_function": None,
+        },
+        "TF_VAR_project_id": {
+            "prompt_text": "ID do projeto da GCP",
+            "callback_function": None,
+        },
+        "VAULT_TOKEN": {
+            "prompt_text": "Token de acesso ao Vault do Escritório Municipal de Dados",
+            "callback_function": None,
+        },
     }
     EMOJIS = {
         "error": [

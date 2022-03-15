@@ -87,9 +87,9 @@ def show():
     for key, value in constants.DATARIO_ENVIRONMENTS_LIST.value.items():
         val = getenv(key)
         if val:
-            log(f'  * {value}: {val}')
+            log(f'  * {value["prompt_text"]}: {val}')
         else:
-            log(f'  * {value}: <not set>', level="warning")
+            log(f'  * {value["prompt_text"]}: <not set>', level="warning")
 
 
 @app.command()
@@ -102,6 +102,10 @@ def update():
         env_value = getenv(env_name)
         if env_value:
             prompt_env(
-                constants.DATARIO_ENVIRONMENTS_LIST.value[env_name], env_value)
+                message=constants.DATARIO_ENVIRONMENTS_LIST.value[env_name]["prompt_text"],
+                default=env_value,
+                callback_function=constants.DATARIO_ENVIRONMENTS_LIST.value[
+                    env_name]["callback_function"],
+            )
     # Save environment variables
     save_env_file(constants.DATARIO_ENVIRONMENTS_FILE.value)

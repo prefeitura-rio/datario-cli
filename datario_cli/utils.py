@@ -53,9 +53,11 @@ def check_for_env_vars(
             setenv(
                 env_var,
                 prompt_env(
-                    f'[{i+1}/{len(missing_vars)}] '
-                    f'{constants.DATARIO_ENVIRONMENTS_LIST.value[env_var]}',
-            ))
+                    message=f'[{i+1}/{len(missing_vars)}] '
+                    f'{constants.DATARIO_ENVIRONMENTS_LIST.value[env_var]["prompt_text"]}',
+                    callback_function=constants.DATARIO_ENVIRONMENTS_LIST.value[
+                        env_var]["callback_function"]
+                ))
         if save:
             save_env_file(path)
 
@@ -178,13 +180,17 @@ def load_env_file(path: str = constants.DATARIO_ENVIRONMENTS_FILE.value) -> bool
     return True
 
 
-def prompt_env(message: str, default: str = None) -> str:
+def prompt_env(message: str, default: str = None, callback_function: Callable = None) -> str:
     """
     Prompts the user for the given environment variable
     """
     if default:
-        return prompt(f"{message}", default=default)
-    return prompt(f"{message}")
+        val = prompt(f"{message}", default=default)
+    else:
+        val = prompt(f"{message}")
+    if callback_function:
+        callback_function(val)
+    return val
 
 
 def random_emoji(category: str = None) -> str:
