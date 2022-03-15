@@ -4,6 +4,7 @@ General utilities for the datario_cli CLI tool.
 
 import base64
 from functools import partial
+import glob
 import json
 from os import getenv, environ
 from pathlib import Path
@@ -23,6 +24,10 @@ def append_output_to_string(output: str, wrapped_string: List[str]) -> None:
     Appends the given output to the given string
     """
     wrapped_string[0] += output
+
+
+def autocomplete_paths(text, state):
+    return (glob.glob(text + "*") + [None])[state]
 
 
 def build_directory_tree(directory: str) -> None:
