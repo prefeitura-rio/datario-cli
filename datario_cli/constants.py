@@ -85,6 +85,8 @@ class Constants (Enum):
     IAC_GIT_REPOSITORY = "https://git.apps.rio.gov.br/escritorio-dados/escritorio-dados/iac-temp.git/"
     IAC_PREFECT_BD_CONFIG_BASE_PATH = IAC_DIRECTORY / \
         "prefect-agent" / "basedosdados" / "config.toml"
+    IAC_PREFECT_NAMESPACE_PATH = IAC_DIRECTORY / \
+        "prefect-agent" / "manifests" / "namespace.yaml"
     IAC_PREFECT_SECRETS_BASE_PATH = IAC_DIRECTORY / \
         "prefect-agent" / "manifests" / "secrets.yaml"
     IAC_PREFECT_SECRETS_PATH = IAC_DIRECTORY / "secrets.yaml"

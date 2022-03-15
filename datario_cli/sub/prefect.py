@@ -26,6 +26,22 @@ from datario_cli.utils import (
 app = Typer()
 
 
+def to_single_base64(text: str) -> str:
+    """
+    Converts a string to a single base64 representation.
+    """
+    return base64.b64encode(text.encode('utf-8')).decode('utf-8')
+
+
+def to_double_base64(text: str) -> str:
+    """
+    Converts a string to a double base64 representation.
+    """
+    first_step = to_single_base64(text)
+    second_step = to_single_base64(first_step)
+    return second_step
+
+
 def build_secrets_yaml():
     """
     Builds the secrets.yaml file.
@@ -49,24 +65,24 @@ def build_secrets_yaml():
     with open(constants.IAC_PREFECT_BD_CONFIG_BASE_PATH.value) as bd_config_base_file:
         txt = bd_config_base_file.read()
     txt.replace("your-project-name", project_name)
-    yamls_dict["gcp-credentials"]["data"]["BASEDOSDADOS_CONFIG"] = base64.b64encode(
-        txt.encode()).decode()
+    yamls_dict["gcp-credentials"]["data"]["BASEDOSDADOS_CONFIG"] = to_double_base64(
+        txt)
     # Basedosdados prod service account
     with open(bd_prod_sa_path) as bd_prod_sa_file:
         txt = bd_prod_sa_file.read()
-    yamls_dict["gcp-credentials"]["data"]["BASEDOSDADOS_CREDENTIALS_PROD"] = base64.b64encode(
-        txt.encode()).decode()
+    yamls_dict["gcp-credentials"]["data"]["BASEDOSDADOS_CREDENTIALS_PROD"] = to_double_base64(
+        txt)
     # Basedosdados staging service account
     with open(bd_staging_sa_path) as bd_staging_sa_file:
         txt = bd_staging_sa_file.read()
-    yamls_dict["gcp-credentials"]["data"]["BASEDOSDADOS_CREDENTIALS_STAGING"] = base64.b64encode(
-        txt.encode()).decode()
+    yamls_dict["gcp-credentials"]["data"]["BASEDOSDADOS_CREDENTIALS_STAGING"] = to_double_base64(
+        txt)
     # Now the Vault address
-    yamls_dict["vault-credentials"]["data"]["VAULT_ADDRESS"] = base64.b64encode(
-        constants.DATARIO_VAULT_EXTERNAL_ADDRESS.value.encode()).decode()
+    yamls_dict["vault-credentials"]["data"]["VAULT_ADDRESS"] = to_single_base64(
+        "http://vault.vault.svc.cluster.local:8200/")
     # And finally the Vault token
-    yamls_dict["vault-credentials"]["data"]["VAULT_TOKEN"] = base64.b64encode(
-        vault_token.encode()).decode()
+    yamls_dict["vault-credentials"]["data"]["VAULT_TOKEN"] = to_single_base64(
+        vault_token)
 
     # Dump secrets.yaml
     with open(constants.IAC_PREFECT_SECRETS_PATH.value, "w") as secrets_file:
@@ -131,6 +147,12 @@ def apply(context: str = None):
     if context is None:
         context = get_current_kubectl_context()
     log(f'{random_emoji("technology")} Aplicando os manifestos do Kubernetes...')
+    log(f'{random_emoji("technology")} Criando namespace...')
+    echo_and_run(
+        f"kubectl apply -f {constants.IAC_PREFECT_NAMESPACE_PATH.value}"
+        f" --context {context}"
+    )
+    log(f'{random_emoji("technology")} Criando secrets...')
     echo_and_run(
         f"kubectl apply -f {constants.IAC_PREFECT_SECRETS_PATH.value}"
         f" --context {context}"
@@ -162,10 +184,16 @@ def destroy(context: str = None):
             f" --kube-context {context}"
         )
         log(f'{random_emoji("technology")} Removendo os manifestos do Kubernetes...')
+        log(f'{random_emoji("technology")} Removendo os secrets...')
         echo_and_run(
             f"kubectl delete -f {constants.IAC_PREFECT_SECRETS_PATH.value}"
             f" --context {context}"
             " --namespace prefect"
+        )
+        log(f'{random_emoji("technology")} Removendo o namespace...')
+        echo_and_run(
+            f"kubectl delete -f {constants.IAC_PREFECT_NAMESPACE_PATH.value}"
+            f" --context {context}"
         )
         log(f'{random_emoji("success")} O Prefect Agent foi removido com sucesso!', "success")
 
