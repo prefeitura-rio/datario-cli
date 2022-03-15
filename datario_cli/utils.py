@@ -49,9 +49,12 @@ def check_for_env_vars(
     if missing_vars:
         log(
             f"Variáveis de ambiente faltando: {missing_vars}", level="warning")
-        for env_var in missing_vars:
-            setenv(env_var, prompt_env(
-                constants.DATARIO_ENVIRONMENTS_LIST.value[env_var],
+        for i, env_var in enumerate(missing_vars):
+            setenv(
+                env_var,
+                prompt_env(
+                    f'[{i+1}/{len(missing_vars)}] '
+                    f'{constants.DATARIO_ENVIRONMENTS_LIST.value[env_var]}',
             ))
         if save:
             save_env_file(path)

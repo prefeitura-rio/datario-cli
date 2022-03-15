@@ -54,6 +54,9 @@ def init():
     # Save environment variables
     save_env_file(constants.DATARIO_ENVIRONMENTS_FILE.value)
 
+    # Emit success message
+    log(f'{random_emoji("success")} Configurações iniciadas.')
+
 
 @app.command()
 def reset():
