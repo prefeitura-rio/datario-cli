@@ -189,7 +189,7 @@ def prompt_env(message: str, default: str = None, callback_function: Callable = 
     else:
         val = prompt(f"{message}")
     if callback_function:
-        callback_function(val)
+        val = callback_function(val)
     return val
 
 

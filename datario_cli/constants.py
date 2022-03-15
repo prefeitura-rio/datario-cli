@@ -6,6 +6,13 @@ from enum import Enum
 from pathlib import Path
 
 
+def expand_path(path: str) -> str:
+    """
+    Expands the given path
+    """
+    return str(Path(path.strip()).expanduser().resolve())
+
+
 class Constants (Enum):
     """
     All constants for the datario CLI tool.
@@ -15,28 +22,28 @@ class Constants (Enum):
     DATARIO_ENVIRONMENTS_FILE = DATARIO_BASE_DIRECTORY / "envs.json"
     DATARIO_ENVIRONMENTS_LIST = {
         "BASEDOSDADOS_CREDENTIALS_PROD_PATH": {
-            "prompt_text": "Caminho absoluto para o arquivo de credenciais do ambiente prod da BD+",
-            "callback_function": None,
+            "prompt_text": "Caminho para o arquivo de credenciais do ambiente prod da BD+",
+            "callback_function": expand_path,
         },
         "BASEDOSDADOS_CREDENTIALS_STAGING_PATH": {
-            "prompt_text": "Caminho absoluto para o arquivo de credenciais do ambiente staging da BD+",
-            "callback_function": None,
+            "prompt_text": "Caminho para o arquivo de credenciais do ambiente staging da BD+",
+            "callback_function": expand_path,
         },
         "GOOGLE_APPLICATION_CREDENTIALS": {
-            "prompt_text": "Caminho absoluto para o arquivo de credenciais da GCP",
-            "callback_function": None,
+            "prompt_text": "Caminho para o arquivo de credenciais da GCP",
+            "callback_function": expand_path,
         },
         "TF_VAR_bucket_name": {
             "prompt_text": "Nome do bucket da GCP para armazenamento do estado do Terraform",
-            "callback_function": None,
+            "callback_function": lambda x: x.strip(),
         },
         "TF_VAR_project_id": {
             "prompt_text": "ID do projeto da GCP",
-            "callback_function": None,
+            "callback_function": lambda x: x.strip(),
         },
         "VAULT_TOKEN": {
             "prompt_text": "Token de acesso ao Vault do Escritório Municipal de Dados",
-            "callback_function": None,
+            "callback_function": lambda x: x.strip(),
         },
     }
     EMOJIS = {
