@@ -120,7 +120,7 @@ def echo_and_run(
     Echoes the command and then runs it, sending output to stdout_callback
     """
     allowed_on_errors = ["raise", "return"]
-    if on_error not in allowed_on_errors:
+    if on_error not in allowed_on_errors and not callable(on_error):
         log(f"Invalid on_error value: {on_error}", "error")
         raise ValueError(f"Invalid on_error: {on_error}")
     log(f'{random_emoji("technology")} {command}')

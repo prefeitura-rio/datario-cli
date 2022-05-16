@@ -2,7 +2,6 @@
 Prefect Agent management through Helm and kubectl
 """
 
-# TODO: Adicionar, no secrets.yaml, um secret para o auth.toml do Prefect
 # TODO: Adicionar um parâmetro no chart apontando para o secret do auth.toml
 # TODO: Adicionar, no chart, um mount para o auth.toml do Prefect se o parâmetro acima for configurado
 
@@ -55,6 +54,8 @@ def build_secrets_yaml():
     bd_prod_sa_path: str = getenv("BASEDOSDADOS_CREDENTIALS_PROD_PATH")
     bd_staging_sa_path: str = getenv("BASEDOSDADOS_CREDENTIALS_STAGING_PATH")
     vault_token: str = getenv("VAULT_TOKEN")
+    prefect_api_key: str = getenv("PREFECT_TOKEN")
+    prefect_tenant_id: str = getenv("PREFECT_TENANT_ID")
 
     # Open and split secrets documents
     with open(constants.IAC_PREFECT_SECRETS_BASE_PATH.value) as secrets_base_file:
@@ -65,10 +66,19 @@ def build_secrets_yaml():
     yamls_dict = {yaml["metadata"]["name"]: yaml for yaml in yamls}
 
     # Update values on secrets
+    # Prefect
+    # Open up the auth.toml file
+    with open(constants.IAC_PREFECT_AUTH_TOML_PATH.value) as auth_toml_file:
+        txt = auth_toml_file.read()
+    txt = txt.replace("prefect-api-key", prefect_api_key)
+    txt = txt.replace("prefect-tenant-id", prefect_tenant_id)
+    yamls_dict["prefect-auth-toml"]["data"]["auth.toml"] = to_single_base64(
+        txt)
+    # Basedosdados
     # First the basedosdados config.toml
     with open(constants.IAC_PREFECT_BD_CONFIG_BASE_PATH.value) as bd_config_base_file:
         txt = bd_config_base_file.read()
-    txt.replace("your-project-name", project_name)
+    txt = txt.replace("your-project-name", project_name)
     yamls_dict["gcp-credentials"]["data"]["BASEDOSDADOS_CONFIG"] = to_double_base64(
         txt)
     # Basedosdados prod service account
@@ -81,6 +91,7 @@ def build_secrets_yaml():
         txt = bd_staging_sa_file.read()
     yamls_dict["gcp-credentials"]["data"]["BASEDOSDADOS_CREDENTIALS_STAGING"] = to_double_base64(
         txt)
+    # Vault
     # Now the Vault address
     yamls_dict["vault-credentials"]["data"]["VAULT_ADDRESS"] = to_single_base64(
         "http://vault.vault.svc.cluster.local:8200/")
@@ -112,6 +123,12 @@ def build_values_yaml():
         yaml.safe_dump(values, values_file)
 
 
+def accept_existing_helm_repo(status_code):
+    if status_code == 1:
+        return
+    raise Exception("Error while adding the helm repo")
+
+
 def setup():
     """
     Setup before running commands.
@@ -138,7 +155,7 @@ def setup():
         build_values_yaml()
         log(f'{random_emoji("success")} Agent values file built.', "success")
     echo_and_run(
-        "helm repo add prefeitura-rio https://prefeitura-rio.github.io/charts")
+        "helm repo add prefeitura-rio https://helm.dados.rio", on_error=accept_existing_helm_repo)
     echo_and_run("helm repo update")
 
 
