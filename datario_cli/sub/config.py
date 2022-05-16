@@ -44,6 +44,9 @@ def init():
             print("🗑️ Arquivo apagado.")
             for key in constants.DATARIO_ENVIRONMENTS_LIST.value:
                 setenv(key, "")
+        else:
+            log(f'{random_emoji("success")} Beleza!')
+            return
 
     # Check for environment variables
     check_for_env_vars(

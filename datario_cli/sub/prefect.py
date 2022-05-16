@@ -2,6 +2,10 @@
 Prefect Agent management through Helm and kubectl
 """
 
+# TODO: Adicionar, no secrets.yaml, um secret para o auth.toml do Prefect
+# TODO: Adicionar um parâmetro no chart apontando para o secret do auth.toml
+# TODO: Adicionar, no chart, um mount para o auth.toml do Prefect se o parâmetro acima for configurado
+
 import base64
 from os import getenv
 

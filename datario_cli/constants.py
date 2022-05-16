@@ -45,6 +45,14 @@ class Constants (Enum):
             "prompt_text": "Token de acesso ao Vault do Escritório Municipal de Dados",
             "callback_function": lambda x: x.strip(),
         },
+        "PREFECT_TOKEN": {
+            "prompt_text": "Token de acesso ao Prefect do Escritório Municipal de Dados",
+            "callback_function": lambda x: x.strip(),
+        },
+        "PREFECT_TENANT_ID": {
+            "prompt_text": "ID do tenant do Prefect",
+            "callback_function": lambda x: x.strip(),
+        },
     }
     EMOJIS = {
         "error": [
