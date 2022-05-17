@@ -69,6 +69,11 @@ def build_secrets_yaml():
     with open(bd_prod_sa_path) as bd_prod_sa_file:
         txt = bd_prod_sa_file.read()
     yamls_dict["gcp-sa"]["data"]["creds.json"] = to_single_base64(txt)
+    # DBT credentials
+    with open(bd_prod_sa_path) as bd_prod_sa_file:
+        txt = bd_prod_sa_file.read()
+    yamls_dict["credentials-dev"]["data"]["dev.json"] = to_single_base64(txt)
+    yamls_dict["credentials-prod"]["data"]["prod.json"] = to_single_base64(txt)
     # Prefect
     # Open up the auth.toml file
     with open(constants.IAC_PREFECT_AUTH_TOML_PATH.value) as auth_toml_file:
