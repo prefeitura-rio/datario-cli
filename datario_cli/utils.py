@@ -241,3 +241,11 @@ def update_git_repo() -> None:
         echo_and_run(
             f"git clone {constants.IAC_GIT_REPOSITORY.value} {constants.IAC_DIRECTORY.value}",
             stdout_callback=lambda _: None)
+
+
+def upgrade() -> None:
+    """
+    Upgrades the datario-cli
+    """
+    log(f"{random_emoji('technology')} Para atualizar o datario-cli, execute o comando:")
+    log(f"curl -sSL https://get.dados.rio/ | bash")

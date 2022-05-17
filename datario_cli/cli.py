@@ -26,5 +26,20 @@ app.add_typer(
     help="Configurations management",
 )
 
+
+@app.command()
+def version():
+    """Prints the version number"""
+    from datario_cli import __version__
+    print(f"datario-cli version {__version__}")
+
+
+@app.command()
+def upgrade():
+    """Upgrade datario-cli"""
+    from datario_cli.utils import upgrade
+    upgrade()
+
+
 if __name__ == "__main__":
     app()
