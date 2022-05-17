@@ -104,11 +104,13 @@ def update():
     for env_name in constants.DATARIO_ENVIRONMENTS_LIST.value:
         env_value = getenv(env_name)
         if env_value:
-            prompt_env(
+            env_value = prompt_env(
                 message=constants.DATARIO_ENVIRONMENTS_LIST.value[env_name]["prompt_text"],
                 default=env_value,
                 callback_function=constants.DATARIO_ENVIRONMENTS_LIST.value[
                     env_name]["callback_function"],
             )
+            setenv(env_name, env_value)
     # Save environment variables
     save_env_file(constants.DATARIO_ENVIRONMENTS_FILE.value)
+    log(f'{random_emoji("success")} Configurações salvas.')
