@@ -140,7 +140,7 @@ def accept_existing_helm_repo(status_code):
     raise Exception("Error while adding the helm repo")
 
 
-def setup():
+def setup(check_build: bool = True):
     """
     Setup before running commands.
     """
@@ -157,14 +157,15 @@ def setup():
     ])
     load_env_file()
     update_git_repo()
-    if not file_exists(constants.IAC_PREFECT_SECRETS_PATH.value):
-        log(f'{random_emoji("error")} Agent secrets file not found. Building...', "warning")
-        build_secrets_yaml()
-        log(f'{random_emoji("success")} Agent secrets file built.', "success")
-    if not file_exists(constants.IAC_PREFECT_VALUES_PATH.value):
-        log(f'{random_emoji("error")} Agent values file not found. Building...', "warning")
-        build_values_yaml()
-        log(f'{random_emoji("success")} Agent values file built.', "success")
+    if check_build:
+        if not file_exists(constants.IAC_PREFECT_SECRETS_PATH.value):
+            log(f'{random_emoji("error")} Agent secrets file not found. Building...', "warning")
+            build_secrets_yaml()
+            log(f'{random_emoji("success")} Agent secrets file built.', "success")
+        if not file_exists(constants.IAC_PREFECT_VALUES_PATH.value):
+            log(f'{random_emoji("error")} Agent values file not found. Building...', "warning")
+            build_values_yaml()
+            log(f'{random_emoji("success")} Agent values file built.', "success")
     echo_and_run(
         "helm repo add prefeitura-rio https://helm.dados.rio", on_error=accept_existing_helm_repo)
     echo_and_run("helm repo update")
@@ -199,6 +200,20 @@ def apply(context: str = None):
         f" -f {constants.IAC_PREFECT_VALUES_PATH.value}"
     )
     log(f'{random_emoji("success")} O deployment do Prefect Agent foi um sucesso!', "success")
+
+
+@app.command()
+def build():
+    """
+    Builds Kubernetes manifests and Helm values
+    """
+    setup(check_build=False)
+    log("Building agent secrets file...")
+    build_secrets_yaml()
+    log(f'{random_emoji("success")} Agent secrets file built.', "success")
+    log("Building agent values...")
+    build_values_yaml()
+    log(f'{random_emoji("success")} Agent values file built.', "success")
 
 
 @app.command()
