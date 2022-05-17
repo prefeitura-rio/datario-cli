@@ -17,7 +17,7 @@ class Constants (Enum):
     """
     All constants for the datario CLI tool.
     """
-    DATARIO_VAULT_EXTERNAL_ADDRESS = "http://vault-datario.vault.svc.cluster.local:8200/"
+    DATARIO_VAULT_EXTERNAL_ADDRESS = "https://vault.dados.rio/"
     DATARIO_BASE_DIRECTORY = Path.home() / ".datario"
     DATARIO_ENVIRONMENTS_FILE = DATARIO_BASE_DIRECTORY / "envs.json"
     DATARIO_ENVIRONMENTS_LIST = {

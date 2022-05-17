@@ -5,6 +5,7 @@ Prefect Agent management through Helm and kubectl
 import base64
 from os import getenv
 
+import requests
 from typer import Typer
 import yaml
 
@@ -63,6 +64,11 @@ def build_secrets_yaml():
     yamls_dict = {yaml["metadata"]["name"]: yaml for yaml in yamls}
 
     # Update values on secrets
+    # GCP SA
+    # Open up the prod credentials file
+    with open(bd_prod_sa_path) as bd_prod_sa_file:
+        txt = bd_prod_sa_file.read()
+    yamls_dict["gcp-sa"]["data"]["creds.json"] = to_single_base64(txt)
     # Prefect
     # Open up the auth.toml file
     with open(constants.IAC_PREFECT_AUTH_TOML_PATH.value) as auth_toml_file:
@@ -91,7 +97,7 @@ def build_secrets_yaml():
     # Vault
     # Now the Vault address
     yamls_dict["vault-credentials"]["data"]["VAULT_ADDRESS"] = to_single_base64(
-        "http://vault.vault.svc.cluster.local:8200/")
+        constants.DATARIO_VAULT_EXTERNAL_ADDRESS.value)
     # And finally the Vault token
     yamls_dict["vault-credentials"]["data"]["VAULT_TOKEN"] = to_single_base64(
         vault_token)
@@ -114,6 +120,9 @@ def build_values_yaml():
 
     # Add labels to the Prefect Agent
     values["agent"]["prefectLabels"] = [project_name]
+
+    # Modify the Apollo URL
+    values["agent"]["apollo_url"] = "https://prefect.dados.rio/api/"
 
     # Dump values.yaml
     with open(constants.IAC_PREFECT_VALUES_PATH.value, "w") as values_file:
@@ -231,6 +240,8 @@ def status(context: str = None):
     if context is None:
         context = get_current_kubectl_context()
 
+    prefect_api_key = getenv("PREFECT_TOKEN")
+
     log(f'{random_emoji("technology")} Verificando o status dos manifestos...')
     return_code = echo_and_run(
         f"kubectl diff -f {constants.IAC_PREFECT_SECRETS_PATH.value}"
@@ -261,15 +272,14 @@ def status(context: str = None):
 
     log(f'{random_emoji("technology")} Verificando capacidade de conexão com o Prefect Server...')
     value = ""
-    return_code = echo_and_run(
-        f"kubectl exec -n prefect"
-        f" --context {context}"
-        " deploy/prefect-agent -c agent --"
-        " python -c \"import requests;"
-        " print(requests.get('http://prefect-apollo-datario:4200/').text)\"",
-        stdout_callback=callback,
-        on_error="return",
-    )
+    try:
+        response = requests.get("https://prefect.dados.rio/api", headers={
+            "Authorization": f"Bearer {prefect_api_key}",
+        })
+        value = response.text
+        return_code = 0
+    except Exception:
+        return_code = 1
     if "GET query missing" in value and return_code == 0:
         log(f'{random_emoji("success")} A conexão com o Prefect Server funciona!', "success")
     else:
