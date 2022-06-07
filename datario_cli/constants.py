@@ -90,7 +90,7 @@ class Constants (Enum):
         ],
     }
     IAC_DIRECTORY = DATARIO_BASE_DIRECTORY / "iac-public"
-    IAC_GIT_REPOSITORY = "https://git.apps.rio.gov.br/escritorio-dados/escritorio-dados/iac-public.git/"
+    IAC_GIT_REPOSITORY = "https://github.com/prefeitura-rio/iac-public.git/"
     IAC_PREFECT_AUTH_TOML_PATH = IAC_DIRECTORY / \
         "prefect-agent" / "prefect" / "auth.toml"
     IAC_PREFECT_BD_CONFIG_BASE_PATH = IAC_DIRECTORY / \
