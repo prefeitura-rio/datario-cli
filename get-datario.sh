@@ -76,7 +76,7 @@ function build_datario {
     exit_if_error $? "Erro ao criar virtualenv."
 
     # Clone datario-cli repository.
-    git clone https://git.apps.rio.gov.br/escritorio-dados/escritorio-dados/datario-cli /tmp/datario-cli
+    git clone https://github.com/prefeitura-rio/datario-cli /tmp/datario-cli
     exit_if_error $? "Erro ao clonar o repositório do datario-cli."
 
     # Install dependencies
