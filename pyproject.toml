@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "datario_cli"
-version = "0.1.0"
+version = "0.1.1"
 description = "Escritório de Dados Rio CLI Tool"
 authors = ["Gabriel Gazola Milan <gabriel.gazola@poli.ufrj.br>"]
 license = "GPL-3.0"
